@@ -1,0 +1,9 @@
+Nome da coluna: "Temp"
+Observações: 153
+NAs: 0
+Média por mês:
+ - Mês 5: Média = 65.55 | Dias medidos = 31
+ - Mês 6: Média = 79.10 | Dias medidos = 30
+ - Mês 7: Média = 83.90 | Dias medidos = 31
+ - Mês 8: Média = 83.97 | Dias medidos = 31
+ - Mês 9: Média = 76.90 | Dias medidos = 30
