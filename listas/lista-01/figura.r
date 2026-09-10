@@ -8,6 +8,6 @@ figura <- ggplot(air, aes(x = as.factor(Month), y = Temp)) +
     x = "Mês",
     y = "valores"
   ) +
-theme_minimal()
+  theme_minimal()
 
 ggsave("figura.pdf", plot = figura, width = 7, height = 5)
