@@ -1,0 +1,10 @@
+*.aux
+*.log
+*.out
+*.bbl
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.Rhistory
+*.RData
