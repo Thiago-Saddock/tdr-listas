@@ -1,1 +1,10 @@
-.aux/n*.log/n*.out/n*.bbl/n*.bbl/n*.blg/n*.fls/n*.fdb_latexmk/n*.Rhistory/n*.RData/n
+*.aux
+*.log
+*.out
+*.bbl
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.Rhistory
+*.RData
