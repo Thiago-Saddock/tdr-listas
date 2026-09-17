@@ -1,5 +1,6 @@
 library(targets)
 library(tarchetypes)
+library(quarto)
 
 tar_source("R")
 
@@ -9,5 +10,6 @@ list(
   tar_target(medias, medias_mensais(dados)),
   tar_target(modelo, ajustar_modelo(dados)),
   tar_target(figura, salvar_figura(dados, modelo), format = "file"),
-  tar_target(csv_medias, gerar_csv(medias), format = "file")
+  tar_target(csv_medias, gerar_csv(medias), format = "file"),
+  tar_quarto(relatorio, "relatorio.qmd")
 )

@@ -29,6 +29,13 @@ salvar_figura <- function(dados, modelo, arquivo = "saidas/dispersao.png") {
   on.exit(dev.off())
   plot(Temp ~ Wind, data = dados, pch = 20, col = "purple",
        xlab = "Vento (MPH)", ylab = "Temperatura (F)")
-  abline(modelo, col = "green", lwd = 2)
+  abline(modelo, col = "darkblue", lwd = 2)
   arquivo
+}
+
+## Cria um CSV 
+gerar_csv <- function(medias, arquivo = "saidas/medias.csv") {
+  dir.create(dirname(arquivo), showWarnings = FALSE, recursive = TRUE)
+  write.csv(medias, file  = arquivo, row.names = FALSE)
+  return(arquivo)
 }
