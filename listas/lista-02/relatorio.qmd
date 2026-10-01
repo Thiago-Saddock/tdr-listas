@@ -1,0 +1,43 @@
+---
+title: "Vento X Temperatura em Nova York"
+author: "Thiago Saddock"
+lang: pt-BR
+format:
+  html:
+    embed-resources: true
+    toc: true
+    number-sections: true
+---
+
+```{r, echo: false, include=FALSE}
+
+
+targets::tar_load(c(medias, modelo, figura))
+
+```
+
+# Médias Mensais
+
+As médias mensais das variáveis estão na @tbl-medias, o modelo da temperatura a partir da velocidade do vento explica `r round(100 * summary(modelo)$r.squared,1)`% da variação de temperatura, em relação aos `r nobs(modelo)` dias em que ambas variáveis foram medidas.
+
+```{r tbl-medias}
+#| echo: false
+#| tbl-cap: "Médias mensais de temperatura e velocidade do tempo."
+knitr::kable(medias)
+```
+
+# Ajuste de regressão
+
+Abaixo na @fig-dispersao pode-se visualizar todos os pontos e a regressão ajustada:
+
+```{r figura}
+#| label: fig-dispersao
+#| echo: false
+#| fig-cap: "Temperatura x Vento, com reta ajustada."
+knitr::include_graphics(here::here(figura))
+```
+
+# Conclusão
+
+Apesar de notar que a temperatura é reduzida com ventos mais fortes, o modelo não explica muito bem a temperatura, provavelmente devido a outras variáveis importantes e pode existir modelos que expliquem melhor essa relação do que uma regressão simples.
+
