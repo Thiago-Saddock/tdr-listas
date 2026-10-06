@@ -1,0 +1,87 @@
+---
+title: "Empréstimos nas bibliotecas públicas de um município"
+author: "Thiago Saddock"
+lang: pt-BR
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    number-sections: true
+---
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(knitr)
+
+```
+
+Exercício 1:
+
+Ao avaliar o arquivo .csv notou-se que a separação é por ";", não existem valores decimais nesses dados e a codificação do "cadastro.csv" é "Latin1", enquanto dos arquivos com a informação dos empréstimos mensais é "ASCII".
+
+```{r}
+#| message: false
+
+cad <- read_csv2("dados/cadastro.csv",
+           locale = locale(encoding = "Latin1"),
+           col_types = "ccfi")
+
+livros_2023 <- read_csv2("dados/emprestimos_2023.csv",
+           locale = locale(encoding = "ASCII"),
+           col_types = "cdddddddddddd",
+           na = "-")
+
+livros_2024 <- read_csv2("dados/emprestimos_2024.csv",
+          locale = locale(encoding = "ASCII"),
+           col_types = "cdddddddddddd",
+           na = "-")
+
+livros_2025 <- read_csv2("dados/emprestimos_2025.csv",
+          locale = locale(encoding = "ASCII"),
+           col_types = "cdddddddddddd",
+           na = "-")
+
+```
+Conferência:
+
+unidades no cadastro: `r nrow(cad)`
+
+
+```{r tbl-cadastro}
+#| label: tbl-cadastro
+#| tbl-cap: "Dados de cadastro"
+
+cad |>
+  kable()
+
+```
+
+
+```{r}
+#| label: tbl-2023
+#| tbl-cap: "Empréstimos 2023"
+
+
+livros_2023 |>
+  kable()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
