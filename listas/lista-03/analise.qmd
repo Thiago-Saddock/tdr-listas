@@ -94,8 +94,29 @@ Número de linhas: `r nrow(livros_2023_long)`
 
 Valores ausentes: `r sum(is.na(livros_2023_long$emprestimos))`
 
+# Exercício 3:
 
 
+```{r}
+#| label: tbl-sem-medição
+#| tbl-cap: "Biblioteca sem medição"
+
+
+livros_2023_cad <- livros_2023_long |>
+  left_join(cad, by = "codigo", relationship = "many-to-one") |>
+  mutate(
+    emprestimos_por_livros = round(emprestimos/acervo, 2)
+  )
+
+#Número de linhas se manteve
+nrow(livros_2023_long) == nrow(livros_2023_cad)
+
+sem_medição <- cad |> 
+  anti_join(livros_2023_long, by = "codigo")
+
+sem_medição |>
+  kable()
+```
 
 
 
