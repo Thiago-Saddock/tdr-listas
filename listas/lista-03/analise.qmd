@@ -6,7 +6,7 @@ format:
   html:
     embed-resources: true
     toc: true
-    number-sections: true
+    number-sections: false
 ---
 ```{r}
 #| message: false
@@ -17,7 +17,7 @@ library(knitr)
 
 ```
 
-Exercício 1:
+# Exercício 1:
 
 Ao avaliar o arquivo .csv notou-se que a separação é por ";", não existem valores decimais nesses dados e a codificação do "cadastro.csv" é "Latin1", enquanto dos arquivos com a informação dos empréstimos mensais é "ASCII".
 
@@ -69,10 +69,30 @@ livros_2023 |>
 
 ```
 
+# Exercício 2:
 
 
+```{r}
 
+ordem_mes <- c("jan", "fev", "mar", "abr",
+               "mai", "jun", "jul", "ago",
+               "set", "out", "nov", "dez")
 
+livros_2023_long <- livros_2023 |> 
+  pivot_longer(
+    cols = jan:dez,
+    names_to = "mes",
+    values_to = "emprestimos"
+  ) |>
+  mutate(
+    mes = factor(mes, levels = ordem_mes)
+  )
+
+```
+
+Número de linhas: `r nrow(livros_2023_long)`
+
+Valores ausentes: `r sum(is.na(livros_2023_long$emprestimos))`
 
 
 
