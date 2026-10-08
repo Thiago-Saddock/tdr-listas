@@ -162,5 +162,51 @@ Como a análise é sobre empréstimos em bibliotecas, foi definido que os meses 
 
 Ao final, o total geral de empréstimos registrados pelas bibliotecas no ano foi de `r format(sum(resumo_categoria$total_ano), big.mark = ".", decimal.mark = ",")`.
 
+# Exercício 5:
 
+
+```{r}
+#| label: tbl-categoria-ano
+#| tbl-cap: "Categoria por ano"
+arquivos <- list.files("dados", pattern = "emprestimos_20.*\\.csv", full.names = TRUE)
+
+arquivos <- set_names(arquivos)
+
+livros <- map_dfr(arquivos, ~ read_delim(
+  .x,
+  delim = ";",
+  na = "-",
+  col_types = "cdddddddddddd"
+  
+), .id = "arquivo")
+
+livros_ano <- livros |>
+  mutate(ano = parse_number(arquivo)) |>
+  pivot_longer(
+    cols = jan:dez,
+    names_to = "mes",
+    values_to = "emprestimos"
+  ) |>
+  mutate (mes = factor(mes, levels = ordem_mes)) |>
+  left_join(cad, by = "codigo", relationship = "many-to-one") |>
+  mutate(emprestimos_por_livros = emprestimos / acervo)
+
+tabela <- livros_ano |>
+  group_by(vinculo, ano) |>
+  summarise(
+    total_ano = sum(emprestimos, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  pivot_wider(
+    names_from = ano,
+    values_from = total_ano
+  )
+
+nrow(livros_ano)
+
+sum(is.na(livros_ano$emprestimos))
+
+kable(tabela)
+
+```
 
