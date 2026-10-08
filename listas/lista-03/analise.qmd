@@ -118,11 +118,49 @@ sem_medição |>
   kable()
 ```
 
+# Exercício 4:
 
 
+```{r}
+#| label: tbl-resumo-unidade
+#| tbl-cap: "Resumo por unidade"
+resumo_unidade <- livros_2023_cad |>
+  group_by(codigo, nome, vinculo) |>
+  summarise(
+    meses_registrados = sum(!is.na(emprestimos)),
+    total_ano = sum(emprestimos, na.rm = TRUE),
+    media_mensal = mean(emprestimos_por_livros, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(desc(media_mensal))
 
+resumo_unidade |> 
+  kable()
+```
 
+```{r}
+#| label: tbl-resumo-categoria
+#| tbl-cap: "Resumo por categoria"
 
+resumo_categoria <- livros_2023_cad |>
+  group_by(vinculo) |>
+  summarise(
+    unidades = sum(emprestimos, na.rm = TRUE),
+    total_ano = sum(emprestimos, na.rm = TRUE),
+    media_mensal = mean(emprestimos_por_livros, na.rm = TRUE),
+    .groups = "drop"
+    )
+
+resumo_categoria |> 
+  kable()
+
+sum(resumo_categoria$total_ano)
+
+```
+
+Como a análise é sobre empréstimos em bibliotecas, foi definido que os meses sem registros foram períodos em que a biblioteca estava fechada e por esse motivo foi retirada da média. Essa decisão afeta a média mensal e não afeta o total do ano.
+
+Ao final, o total geral de empréstimos registrados pelas bibliotecas no ano foi de `r format(sum(resumo_categoria$total_ano), big.mark = ".", decimal.mark = ",")`.
 
 
 
