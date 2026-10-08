@@ -1,0 +1,212 @@
+---
+title: "Empréstimos nas bibliotecas públicas de um município"
+author: "Thiago Saddock"
+lang: pt-BR
+format: 
+  html:
+    embed-resources: true
+    toc: true
+    number-sections: false
+---
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(knitr)
+
+```
+
+# Exercício 1:
+
+Ao avaliar o arquivo .csv notou-se que a separação é por ";", não existem valores decimais nesses dados e a codificação do "cadastro.csv" é "Latin1", enquanto dos arquivos com a informação dos empréstimos mensais é "ASCII".
+
+```{r}
+#| message: false
+
+cad <- read_csv2("dados/cadastro.csv",
+           locale = locale(encoding = "Latin1"),
+           col_types = "ccfi")
+
+livros_2023 <- read_csv2("dados/emprestimos_2023.csv",
+           locale = locale(encoding = "ASCII"),
+           col_types = "cdddddddddddd",
+           na = "-")
+
+livros_2024 <- read_csv2("dados/emprestimos_2024.csv",
+          locale = locale(encoding = "ASCII"),
+           col_types = "cdddddddddddd",
+           na = "-")
+
+livros_2025 <- read_csv2("dados/emprestimos_2025.csv",
+          locale = locale(encoding = "ASCII"),
+           col_types = "cdddddddddddd",
+           na = "-")
+
+```
+Conferência:
+
+unidades no cadastro: `r nrow(cad)`
+
+
+```{r tbl-cadastro}
+#| label: tbl-cadastro
+#| tbl-cap: "Dados de cadastro"
+
+cad |>
+  kable()
+
+```
+
+
+```{r}
+#| label: tbl-2023
+#| tbl-cap: "Empréstimos 2023"
+
+
+livros_2023 |>
+  kable()
+
+```
+
+# Exercício 2:
+
+
+```{r}
+
+ordem_mes <- c("jan", "fev", "mar", "abr",
+               "mai", "jun", "jul", "ago",
+               "set", "out", "nov", "dez")
+
+livros_2023_long <- livros_2023 |> 
+  pivot_longer(
+    cols = jan:dez,
+    names_to = "mes",
+    values_to = "emprestimos"
+  ) |>
+  mutate(
+    mes = factor(mes, levels = ordem_mes)
+  )
+
+```
+
+Número de linhas: `r nrow(livros_2023_long)`
+
+Valores ausentes: `r sum(is.na(livros_2023_long$emprestimos))`
+
+# Exercício 3:
+
+
+```{r}
+#| label: tbl-sem-medição
+#| tbl-cap: "Biblioteca sem medição"
+
+
+livros_2023_cad <- livros_2023_long |>
+  left_join(cad, by = "codigo", relationship = "many-to-one") |>
+  mutate(
+    emprestimos_por_livros = round(emprestimos/acervo, 2)
+  )
+
+#Número de linhas se manteve
+nrow(livros_2023_long) == nrow(livros_2023_cad)
+
+sem_medição <- cad |> 
+  anti_join(livros_2023_long, by = "codigo")
+
+sem_medição |>
+  kable()
+```
+
+# Exercício 4:
+
+
+```{r}
+#| label: tbl-resumo-unidade
+#| tbl-cap: "Resumo por unidade"
+resumo_unidade <- livros_2023_cad |>
+  group_by(codigo, nome, vinculo) |>
+  summarise(
+    meses_registrados = sum(!is.na(emprestimos)),
+    total_ano = sum(emprestimos, na.rm = TRUE),
+    media_mensal = mean(emprestimos_por_livros, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(desc(media_mensal))
+
+resumo_unidade |> 
+  kable()
+```
+
+```{r}
+#| label: tbl-resumo-categoria
+#| tbl-cap: "Resumo por categoria"
+
+resumo_categoria <- livros_2023_cad |>
+  group_by(vinculo) |>
+  summarise(
+    unidades = sum(emprestimos, na.rm = TRUE),
+    total_ano = sum(emprestimos, na.rm = TRUE),
+    media_mensal = mean(emprestimos_por_livros, na.rm = TRUE),
+    .groups = "drop"
+    )
+
+resumo_categoria |> 
+  kable()
+
+sum(resumo_categoria$total_ano)
+
+```
+
+Como a análise é sobre empréstimos em bibliotecas, foi definido que os meses sem registros foram períodos em que a biblioteca estava fechada e por esse motivo foi retirada da média. Essa decisão afeta a média mensal e não afeta o total do ano.
+
+Ao final, o total geral de empréstimos registrados pelas bibliotecas no ano foi de `r format(sum(resumo_categoria$total_ano), big.mark = ".", decimal.mark = ",")`.
+
+# Exercício 5:
+
+
+```{r}
+#| label: tbl-categoria-ano
+#| tbl-cap: "Categoria por ano"
+arquivos <- list.files("dados", pattern = "emprestimos_20.*\\.csv", full.names = TRUE)
+
+arquivos <- set_names(arquivos)
+
+livros <- map_dfr(arquivos, ~ read_delim(
+  .x,
+  delim = ";",
+  na = "-",
+  col_types = "cdddddddddddd"
+  
+), .id = "arquivo")
+
+livros_ano <- livros |>
+  mutate(ano = parse_number(arquivo)) |>
+  pivot_longer(
+    cols = jan:dez,
+    names_to = "mes",
+    values_to = "emprestimos"
+  ) |>
+  mutate (mes = factor(mes, levels = ordem_mes)) |>
+  left_join(cad, by = "codigo", relationship = "many-to-one") |>
+  mutate(emprestimos_por_livros = emprestimos / acervo)
+
+tabela <- livros_ano |>
+  group_by(vinculo, ano) |>
+  summarise(
+    total_ano = sum(emprestimos, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  pivot_wider(
+    names_from = ano,
+    values_from = total_ano
+  )
+
+nrow(livros_ano)
+
+sum(is.na(livros_ano$emprestimos))
+
+kable(tabela)
+
+```
+

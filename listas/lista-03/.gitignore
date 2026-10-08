@@ -1,0 +1,6 @@
+*.html
+analise_files/
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/

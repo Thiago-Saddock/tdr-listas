@@ -1,0 +1,29 @@
+Lista 03 --- dados sorteados para o login thiago-saddock
+
+Tema: Empréstimos nas bibliotecas públicas de um município
+Unidade de observação: biblioteca
+
+Arquivos
+
+  emprestimos_2023.csv, emprestimos_2024.csv, emprestimos_2025.csv
+      Uma linha por unidade e uma coluna por mês do ano. A coluna
+      codigo identifica a unidade, e as colunas jan a dez trazem o
+      valor medido: empréstimos registrados no mês.
+      Mês sem registro aparece como "-".
+
+  cadastro.csv
+      Uma linha por unidade, com as colunas:
+        codigo        identificador da unidade, o mesmo das medições
+        nome          nome da unidade
+        vinculo       categoria: Escolar, Comunitária ou Parque
+        acervo        porte: acervo, em milhares de volumes
+
+Conferência
+
+  unidades no cadastro:   12
+  unidades com medições:  11
+
+  ano    meses sem registro    soma dos valores registrados
+  2023                    4                          153885
+  2024                    3                          152505
+  2025                    4                          154143
